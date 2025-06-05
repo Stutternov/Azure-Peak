@@ -2,6 +2,7 @@ GLOBAL_LIST_EMPTY(outlawed_players)
 GLOBAL_LIST_EMPTY(lord_decrees)
 GLOBAL_LIST_EMPTY(court_agents)
 GLOBAL_LIST_INIT(laws_of_the_land, initialize_laws_of_the_land())
+GLOBAL_VAR_INIT(last_crown_announce, -50000) // Inits variable for later
 
 /proc/initialize_laws_of_the_land()
 	var/list/laws = strings("laws_of_the_land.json", "lawsets")
@@ -150,6 +151,9 @@ GLOBAL_LIST_INIT(laws_of_the_land, initialize_laws_of_the_land())
 					say("You need the crown.")
 					playsound(src, 'sound/misc/machineno.ogg', 100, FALSE, -1)
 					return
+				if(world.time < GLOB.last_crown_announce + 180 SECONDS)	//3 minute timer
+					say("You must wait [round((GLOB.last_crown_announce + 180 SECONDS - world.time)/180, 0.1)] minutes before making another announcement!")
+					return FALSE
 				if(!SScommunications.can_announce(H))
 					say("I must gather my strength!")
 					return

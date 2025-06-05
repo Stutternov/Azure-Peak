@@ -1,3 +1,6 @@
+GLOBAL_VAR_INIT(last_priest_announce, -50000) // Inits variable for later
+GLOBAL_VAR_INIT(last_priest_curse, -50000)
+
 /datum/job/roguetown/priest
 	title = "Priest"
 	flag = PRIEST
@@ -139,6 +142,9 @@
 		if(!istype(get_area(src), /area/rogue/indoors/town/church/chapel))
 			to_chat(src, span_warning("I need to do this from the chapel."))
 			return FALSE
+		if(world.time < GLOB.last_priest_curse + 120 SECONDS)	//2 minute timer
+			to_chat(src, span_warning("You must wait [round((GLOB.last_priest_curse + 120 SECONDS - world.time)/120, 0.1)] minutes before announcing an excommunication!"))
+			return FALSE
 		if(inputty in GLOB.excommunicated_players)
 			GLOB.excommunicated_players -= inputty
 			priority_announce("[real_name] has forgiven [inputty]. Once more walk in the light!", title = "Hail the Ten!", sound = 'sound/misc/bell.ogg')
@@ -167,6 +173,9 @@
 	if(inputty)
 		if(!istype(get_area(src), /area/rogue/indoors/town/church/chapel))
 			to_chat(src, span_warning("I need to do this from the chapel."))
+			return FALSE
+		if(world.time < GLOB.last_priest_announce + 180 SECONDS)	//3 minute timer
+			to_chat(src, span_warning("You must wait [round((GLOB.last_priest_announce + 180 SECONDS - world.time)/180, 0.1)] minutes before making another announcement!"))
 			return FALSE
 		priority_announce("[inputty]", title = "The Priest Speaks", sound = 'sound/misc/bell.ogg')
 
