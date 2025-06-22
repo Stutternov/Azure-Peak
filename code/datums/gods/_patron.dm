@@ -37,11 +37,27 @@ GLOBAL_LIST_EMPTY(preference_patrons)
 	if(HAS_TRAIT(pious, TRAIT_XYLIX))
 		pious.grant_language(/datum/language/thievescant)
 		pious.verbs += /mob/living/carbon/human/proc/emote_ffsalute
-	if (HAS_TRAIT(pious, TRAIT_CABAL))
+	if(HAS_TRAIT(pious, TRAIT_CABAL))
 		pious.faction |= "cabal"
+	if(HAS_TRAIT(pious, TRAIT_COMMIE))
+		var/mob/living/carbon/human/H = src
+		if(H.mind)
+			if(prob(50))
+				if(H.mind?.get_skill_level(/datum/skill/misc/stealing) < SKILL_LEVEL_EXPERT)	//We cap at expert.
+					H.mind.adjust_skillrank(/datum/skill/misc/stealing, 1, TRUE)
+				else(H.mind?.get_skill_level(/datum/skill/misc/lockpicking) < SKILL_LEVEL_EXPERT)	//Fallback incase they have stealing skill already.
+					H.mind.adjust_skillrank(/datum/skill/misc/lockpicking, 1, TRUE)
+			else
+				if(H.mind?.get_skill_level(/datum/skill/misc/lockpicking) < SKILL_LEVEL_EXPERT)
+					H.mind.adjust_skillrank(/datum/skill/misc/lockpicking, 1, TRUE)
+				else(H.mind?.get_skill_level(/datum/skill/misc/stealing) < SKILL_LEVEL_EXPERT)	//We cap at expert.
+					H.mind.adjust_skillrank(/datum/skill/misc/stealing, 1, TRUE)
+				
+
+
 
 /datum/patron/proc/on_loss(mob/living/pious)
-	if (HAS_TRAIT(pious, TRAIT_CABAL))
+	if(HAS_TRAIT(pious, TRAIT_CABAL))
 		pious.faction -= "cabal"
 	if(HAS_TRAIT(pious, TRAIT_XYLIX))
 		pious.remove_language(/datum/language/thievescant)
